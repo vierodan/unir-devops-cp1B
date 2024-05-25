@@ -11,7 +11,7 @@ pipeline {
                             whoami
                             echo %WORKSPACE%
 
-                            flake8 --exit-zero --format=pylint app > flake8.out
+                            flake8 --exit-zero --format=pylint --max-line-length=120 app > flake8.out
                         '''
 
                         recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')], qualityGates:[[threshold: 8, type: 'TOTAL', unstable: true], [threshold: 10, type: 'TOTAL', unstable: false]]
