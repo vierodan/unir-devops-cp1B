@@ -2,22 +2,10 @@ pipeline {
     agent any
 
     stages {
-        stage('Stash files'){
-            agent {
-                label 'agent1'
-            }
-            steps {
-                stash includes: '**/*', name: 'sourceCode'
-            }
-        }
         stage('Tests') {
             parallel {
                 stage('Unit Tests') {
-                    agent {
-                        label 'agent2'
-                    }
                     steps {
-                        unstash 'sourceCode'
                         bat '''
                             hostname
                             whoami
@@ -26,22 +14,14 @@ pipeline {
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             bat '''
                                 set PYTHONPATH=%WORKSPACE%
-                                pytest --junitxml=result-unit.xml test\\unit
+                                coverage run --source=app --omit=app\\__init__.py,app\\api.py -m pytest --junitxml=result-unit.xml test\\unit
+                                coverage xml
                             '''
-                        }
-                    }
-                    post{
-                        always{
-                            stash includes: 'result-unit.xml', name: 'results_unit'
                         }
                     }
                 }
                 stage('Api Tests') {
-                    agent {
-                        label 'agent3'
-                    }
                     steps {
-                        unstash 'sourceCode'
                         bat '''
                             hostname
                             whoami
@@ -61,18 +41,23 @@ pipeline {
                             '''
                         }
                     }
-                    post{
-                        always{
-                            stash includes: 'result-rest.xml', name: 'results_rest'
-                        }
-                    }
+                }
+            }
+        }
+        stage('Coverage'){
+            steps{
+                bat '''
+                    hostname
+                    whoami
+                    echo %WORKSPACE%
+                '''
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    cobertura coberturaReportFile: 'coverage.xml', conditionalCoverageTargets: '100,90,80', lineCoverageTargets: '100,85,95', onlyStable: false
                 }
             }
         }
         stage('Results') {
             steps {
-                unstash 'results_unit'
-                unstash 'results_rest'
                 sleep(time: 5, unit: 'SECONDS')
                 junit 'result*.xml'
                 echo 'Finish'
