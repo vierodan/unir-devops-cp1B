@@ -4,6 +4,19 @@ pipeline {
     stages {
         stage('Tests') {
             parallel {
+                stage('Static Analysis'){
+                    steps{
+                        bat '''
+                            hostname
+                            whoami
+                            echo %WORKSPACE%
+
+                            flake8 --exit-zero --format=pylint app > flake8.out
+                        '''
+
+                        recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')], qualityGates:[[threshold: 8, type: 'TOTAL', unstable: true], [threshold: 10, type: 'TOTAL', unstable: false]]
+                    }
+                }
                 stage('Unit Tests') {
                     steps {
                         bat '''
@@ -52,7 +65,7 @@ pipeline {
                     echo %WORKSPACE%
                 '''
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    cobertura coberturaReportFile: 'coverage.xml', conditionalCoverageTargets: '100,90,80', lineCoverageTargets: '100,95,85', onlyStable: false
+                    cobertura coberturaReportFile: 'coverage.xml', conditionalCoverageTargets: '100,90,80', lineCoverageTargets: '100,95,85', onlyStable: false, failUnestable: false
                 }
             }
         }
