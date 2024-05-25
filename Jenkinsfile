@@ -65,7 +65,7 @@ pipeline {
                     echo %WORKSPACE%
                 '''
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    cobertura coberturaReportFile: 'coverage.xml', conditionalCoverageTargets: '100,90,80', lineCoverageTargets: '100,95,85', onlyStable: false, failUnestable: false
+                    cobertura coberturaReportFile: 'coverage.xml', conditionalCoverageTargets: '100,90,80', lineCoverageTargets: '100,95,85', onlyStable: false
                 }
             }
         }
