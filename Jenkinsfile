@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Tests') {
             parallel {
-                stage('Static Analysis'){
+                stage('Static Code Analysis'){
                     steps{
                         bat '''
                             hostname
@@ -13,11 +13,10 @@ pipeline {
 
                             flake8 --exit-zero --format=pylint --max-line-length=120 app > flake8.out
                         '''
-
                         recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')], qualityGates:[[threshold: 8, type: 'TOTAL', unstable: true], [threshold: 10, type: 'TOTAL', unstable: false]]
                     }
                 }
-                stage('Unit Tests') {
+                stage('Unit Tests and Coverage') {
                     steps {
                         bat '''
                             hostname
@@ -55,9 +54,22 @@ pipeline {
                         }
                     }
                 }
+                stage('Scurity Analysis'){
+                    steps{
+                        bat '''
+                            hostname
+                            whoami
+                            echo %WORKSPACE%
+
+                            bandit --exit-zero -r . -f custom -o bandit.out --severity-level medium --msg-template "{abspath}:{line}: [{test_id}] {msg}"
+                        '''
+                        recordIssues tools: [pylint(name: 'Bandit', pattern: 'bandit.out')], qualityGates:[[threshold: 2, type: 'TOTAL', unstable: true], [threshold: 4, type: 'TOTAL', unstable: false]]
+
+                    }
+                }
             }
         }
-        stage('Coverage'){
+        stage('Code Coverage Analysis'){
             steps{
                 bat '''
                     hostname
