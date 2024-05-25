@@ -14,7 +14,9 @@ pipeline {
                             flake8 --exit-zero --format=pylint --max-line-length=120 app > flake8.out
                         '''
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                            recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')], qualityGates:[[threshold: 8, type: 'TOTAL', unstable: true], [threshold: 10, type: 'TOTAL', unstable: false]]
+                            recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')], 
+                                qualityGates:[[threshold: 8, type: 'TOTAL', unstable: true], 
+                                              [threshold: 10, type: 'TOTAL', unstable: false]]
                         }
                     }
                 }
@@ -63,10 +65,14 @@ pipeline {
                             whoami
                             echo %WORKSPACE%
 
-                            bandit --exit-zero -r . -f custom -o bandit.out --severity-level medium --msg-template "{abspath}:{line}: [{test_id}] {msg}"
+                            bandit --exit-zero -r . -f json -o bandit.out --severity-level medium
                         '''
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                            recordIssues tools: [pylint(name: 'Bandit', pattern: 'bandit.out')], qualityGates:[[threshold: 2, type: 'TOTAL', unstable: true], [threshold: 4, type: 'TOTAL', unstable: false]]
+                            bat 'bandit -r . -f json -o bandit.out'
+                            recordIssues tools: [bandit(pattern: 'bandit.out')], 
+                                        qualityGates: [[threshold: 2, type: 'TOTAL', unstable: true], 
+                                                        [threshold: 4, type: 'TOTAL', unstable: false]]
+
                         }
                     }
                 }
@@ -80,7 +86,10 @@ pipeline {
                     echo %WORKSPACE%
                 '''
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    cobertura coberturaReportFile: 'coverage.xml', conditionalCoverageTargets: '100,90,80', lineCoverageTargets: '100,95,85', onlyStable: false
+                    cobertura coberturaReportFile: 'coverage.xml', 
+                        conditionalCoverageTargets: '100,90,80', 
+                        lineCoverageTargets: '100,95,85', 
+                        onlyStable: false
                 }
             }
         }
