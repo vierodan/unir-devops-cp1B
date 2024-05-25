@@ -1,10 +1,13 @@
 pipeline {
     agent any
+    
     stages {
-        stage('Tests') {
+        stage('Stash files'){
             steps {
                 stash includes: '**/*', name: 'sourceCode'
             }
+        }
+        stage('Tests') {
             parallel {
                 stage('Unit Tests') {
                     agent {
