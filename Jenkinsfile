@@ -1,8 +1,11 @@
 pipeline {
     agent any
-    
+
     stages {
         stage('Stash files'){
+            agent {
+                label 'agent1'
+            }
             steps {
                 stash includes: '**/*', name: 'sourceCode'
             }
@@ -11,7 +14,7 @@ pipeline {
             parallel {
                 stage('Unit Tests') {
                     agent {
-                        label 'agent1'
+                        label 'agent2'
                     }
                     steps {
                         unstash 'sourceCode'
@@ -35,7 +38,7 @@ pipeline {
                 }
                 stage('Api Tests') {
                     agent {
-                        label 'agent2'
+                        label 'agent3'
                     }
                     steps {
                         unstash 'sourceCode'
