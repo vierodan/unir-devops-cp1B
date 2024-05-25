@@ -1,22 +1,10 @@
 pipeline {
     agent any
-
     stages {
-	    stage('Stash files') {
+        stage('Tests') {
             steps {
                 stash includes: '**/*', name: 'sourceCode'
             }
-        }
-	    stage('Mock Build') {
-            steps {
-                echo 'Eyyy this is Python is not necessary to compile anything'
-                bat '''
-                    echo %WORKSPACE%
-                    dir
-                '''
-            }
-        }
-        stage('Tests') {
             parallel {
                 stage('Unit Tests') {
                     agent {
@@ -60,7 +48,7 @@ pipeline {
                                 start flask run
                                 start java -jar C:\\avr\\wiremock\\wiremock-standalone-3.5.4.jar --port 9090 --root-dir test\\wiremock
                             '''
-                                sleep(time: 10, unit: 'SECONDS')
+                                sleep(time: 15, unit: 'SECONDS')
                             bat '''
                                 set PYTHONPATH=%WORKSPACE%
                                 pytest --junitxml=result-rest.xml test\\rest
