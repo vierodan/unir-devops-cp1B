@@ -68,7 +68,6 @@ pipeline {
                             bandit --exit-zero -r . -f json -o bandit.out --severity-level medium
                         '''
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                            bat 'bandit -r . -f json -o bandit.out'
                             recordIssues tools: [bandit(pattern: 'bandit.out')], 
                                         qualityGates: [[threshold: 2, type: 'TOTAL', unstable: true], 
                                                         [threshold: 4, type: 'TOTAL', unstable: false]]
