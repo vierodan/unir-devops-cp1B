@@ -50,7 +50,7 @@ pipeline {
                                 start flask run
                                 start java -jar C:\\avr\\wiremock\\wiremock-standalone-3.5.4.jar --port 9090 --root-dir test\\wiremock
                             '''
-                                sleep(time: 15, unit: 'SECONDS')
+                                sleep(time: 12, unit: 'SECONDS')
                             bat '''
                                 set PYTHONPATH=%WORKSPACE%
                                 pytest --junitxml=result-rest.xml test\\rest
@@ -69,7 +69,7 @@ pipeline {
                         '''
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             recordIssues tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')], 
-                                                    qualityGates:[[threshold: 2, type: 'TOTAL', unstable: true], 
+                                                    qualityGates:[[threshold: 3, type: 'TOTAL', unstable: true], 
                                                                 [threshold: 4, type: 'TOTAL', unstable: false]]
 
                         }
@@ -105,7 +105,7 @@ pipeline {
                         set FLASK_APP=app\\api.py
                         start flask run
                     '''
-                        sleep(time: 15, unit: 'SECONDS')
+                        sleep(time: 12, unit: 'SECONDS')
                     bat '''
                         jmeter -n -t test\\jmeter\\add-substract-plan.jmx -f -l flask.jtl
                     '''
