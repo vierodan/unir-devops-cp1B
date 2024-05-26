@@ -110,7 +110,7 @@ pipeline {
                         jmeter -n -t test\\jmeter\\add-substract-plan.jmx -f -l flask.jtl
                     '''
 
-                    perfReport SourceDataFiles: 'flask.jtl'
+                    perfReport sourceDataFiles: 'flask.jtl'
                 }
             }
         }
