@@ -65,12 +65,12 @@ pipeline {
                             whoami
                             echo %WORKSPACE%
 
-                            bandit --exit-zero -r . -f json -o bandit.out --severity-level medium
+                            bandit --exit-zero -r . -f custom -o bandit.out --severity-level medium --msg-template "{abspath}:{line}: [{test_id}] {msg}"
                         '''
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                            recordIssues tools: [bandit(pattern: 'bandit.out')], 
-                                        qualityGates: [[threshold: 2, type: 'TOTAL', unstable: true], 
-                                                        [threshold: 4, type: 'TOTAL', unstable: false]]
+                            recordIssues tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')], 
+                                                    qualityGates:[[threshold: 2, type: 'TOTAL', unstable: true], 
+                                                                [threshold: 4, type: 'TOTAL', unstable: false]]
 
                         }
                     }
