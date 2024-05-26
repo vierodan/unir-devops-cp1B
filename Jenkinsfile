@@ -92,6 +92,28 @@ pipeline {
                 }
             }
         }
+        stage('Performance Analysis'){
+            steps{
+                bat '''
+                    hostname
+                    whoami
+                    echo %WORKSPACE%
+                '''
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    bat '''
+                        set PYTHONPATH=%WORKSPACE%
+                        set FLASK_APP=app\\api.py
+                        start flask run
+                    '''
+                        sleep(time: 15, unit: 'SECONDS')
+                    bat '''
+                        jmeter -n -t test\\jmeter\\add-substract-plan.jmx -f -l flask.jtl
+                    '''
+
+                    perfReport SourceDataFiles: 'flask.jtl'
+                }
+            }
+        }
         stage('Results') {
             steps {
                 sleep(time: 5, unit: 'SECONDS')
