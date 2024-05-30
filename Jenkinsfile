@@ -107,9 +107,9 @@ pipeline {
                         jmeter -n -t test\\jmeter\\add-plan.jmx -f -l add.jtl
                         jmeter -n -t test\\jmeter\\substract-plan.jmx -f -l substract.jtl
                     '''
-
-                    archiveArtifacts artifacts: '*.jtl', allowEmptyArchive: true
-                    perfReport sourceDataFiles: '**/*.jtl'
+                    perfReport sourceDataFiles: 'add.jtl', reportName: 'Add Plan Report'
+                    perfReport sourceDataFiles: 'substract.jtl', reportName: 'Substract Plan Report'
+                    
                 }
             }
         }
