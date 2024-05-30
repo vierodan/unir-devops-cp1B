@@ -59,10 +59,10 @@ pipeline {
                                 onlyStable: false  
                         }
                     }
-                }
-                post{
-                    always{
-                        stash includes: 'result-unit.xml', name: 'results_unit'
+                    post{
+                        always{
+                            stash includes: 'result-unit.xml', name: 'results_unit'
+                        }
                     }
                 }
                 stage('Api Tests') {
@@ -91,10 +91,10 @@ pipeline {
                             '''
                         }
                     }
-                }
-                post{
-                    always{
-                        stash includes: 'result-rest.xml', name: 'results_rest'
+                    post{
+                        always{
+                            stash includes: 'result-rest.xml', name: 'results_rest'
+                        }
                     }
                 }
                 stage('Security Analysis'){
