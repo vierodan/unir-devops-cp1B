@@ -108,8 +108,7 @@ pipeline {
                         jmeter -n -t test\\jmeter\\substract-plan.jmx -f -l substract.jtl
                     '''
 
-                    perfReport sourceDataFiles: 'add.jtl'
-                    perfReport sourceDataFiles: 'substract.jtl'
+                    perfReport sourceDataFiles: '*.jtl'
                 }
             }
         }
