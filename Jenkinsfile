@@ -104,10 +104,12 @@ pipeline {
                     '''
                         sleep(time: 12, unit: 'SECONDS')
                     bat '''
-                        jmeter -n -t test\\jmeter\\add-substract-plan.jmx -f -l flask.jtl
+                        jmeter -n -t test\\jmeter\\add-plan.jmx -f -l add.jtl
+                        jmeter -n -t test\\jmeter\\substract-plan.jmx -f -l substract.jtl
                     '''
 
-                    perfReport sourceDataFiles: 'flask.jtl'
+                    perfReport sourceDataFiles: 'add.jtl'
+                    perfReport sourceDataFiles: 'substract.jtl'
                 }
             }
         }
