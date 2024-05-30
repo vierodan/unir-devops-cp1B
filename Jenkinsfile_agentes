@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'agent3'
+        label any
     }
 
     stages {
@@ -99,7 +99,7 @@ pipeline {
                 }
                 stage('Security Analysis'){
                     agent {
-                        label 'agent3'
+                        label 'agent2'
                     }
                     steps{
                         unstash 'sourceCode'
@@ -125,7 +125,7 @@ pipeline {
         }
         stage('Performance Analysis'){
             agent {
-                label 'agent3'
+                label 'agent4'
             }
             steps{
                 unstash 'sourceCode'
