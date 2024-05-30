@@ -67,7 +67,7 @@ pipeline {
                         }
                     }
                 }
-                stage('Scurity Analysis'){
+                stage('Security Analysis'){
                     steps{
                         bat '''
                             hostname
