@@ -106,10 +106,18 @@ pipeline {
                     bat '''
                         jmeter -n -t test\\jmeter\\add-plan.jmx -f -l add.jtl
                         jmeter -n -t test\\jmeter\\substract-plan.jmx -f -l substract.jtl
+
+                        mkdir -p reports/add
+                        mkdir -p reports/substract
+                        move add.jtl reports/add/add.jtl
+                        move substract.jtl reports/substract/substract.jtl
                     '''
-                    perfReport sourceDataFiles: 'add.jtl', reportName: 'Add Plan Report'
-                    perfReport sourceDataFiles: 'substract.jtl', reportName: 'Substract Plan Report'
-                    
+
+                    archiveArtifacts artifacts: 'reports/**/*.jtl', allowEmptyArchive: true
+
+                    perfReport sourceDataFiles: 'reports/add/add.jtl'
+                    perfReport sourceDataFiles: 'reports/substract/substract.jtl'
+
                 }
             }
         }
