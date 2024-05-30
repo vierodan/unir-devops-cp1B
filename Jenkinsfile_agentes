@@ -97,7 +97,7 @@ pipeline {
                 }
                 stage('Security Analysis'){
                     agent {
-                        label 'agent2'
+                        label 'agent1'
                     }
                     steps{
                         unstash 'sourceCode'
@@ -123,7 +123,7 @@ pipeline {
         }
         stage('Performance Analysis'){
             agent {
-                label 'agent4'
+                label 'agent2'
             }
             steps{
                 unstash 'sourceCode'
